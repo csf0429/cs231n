@@ -299,8 +299,8 @@ class FullyConnectedNet(object):
     # scores, cache_scores = affine_forward(X,W2,b2)
     layer_input = X
     fc_out = {}
-    cache_fc_out = {}
     cache_fc = {}
+    cache_dp = {}
     hidden_dims = self.num_layers - 1
     for lay in xrange(hidden_dims):
         if self.use_batchnorm:
@@ -310,6 +310,9 @@ class FullyConnectedNet(object):
         else:
             layer_input,cache_fc[lay] = affine_relu_forward(layer_input, self.params['W%d'%(lay+1)],self.params['b%d'%(lay+1)])
         #print "cache_hidden[%d]="%(lay),cache_hidden[lay]
+        if self.use_dropout:
+            layer_input,cache_dp[lay] = dropout_forward(layer_input,self.dropout_param)
+
     fc_out, cache_fc[self.num_layers-1] = \
     affine_forward(layer_input,self.params['W%d'%(self.num_layers)],self.params['b%d'%(self.num_layers)])
     scores = fc_out
@@ -336,7 +339,6 @@ class FullyConnectedNet(object):
     # of 0.5 to simplify the expression for the gradient.                      #
     ############################################################################
     reg = self.reg
-    dhidden_layer = {}
     loss,dscores = softmax_loss(scores,y)
     for lay in xrange(self.num_layers):
           loss += 0.5 * reg * np.sum(self.params['W%d'%(lay+1)]**2)
@@ -354,6 +356,8 @@ class FullyConnectedNet(object):
           #print "lay=",lay
           #print "dhout shape:",dhout.shape
           #print "cache_fc[%d]="%lay,cache_fc[lay]
+          if self.use_dropout:
+              dhout = dropout_backward(dhout, cache_dp[lay])
           if self.use_batchnorm:
               dx, dw, db, dgamma, dbeta = affine_bn_relu_backward(dhout,cache_fc[lay])
           else:
