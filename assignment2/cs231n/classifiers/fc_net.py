@@ -79,7 +79,6 @@ class TwoLayerNet(object):
     # TODO: Implement the forward pass for the two-layer net, computing the    #
     # class scores for X and storing them in the scores variable.              #
     ############################################################################i
-    N = X.shape[0]
     W1, b1 = self.params['W1'], self.params['b1']
     W2, b2 = self.params['W2'], self.params['b2']
     X = np.reshape(X,(X.shape[0],-1))
@@ -108,28 +107,11 @@ class TwoLayerNet(object):
     # of 0.5 to simplify the expression for the gradient.                      #
     ############################################################################
     reg = self.reg
-    # indicies = np.argmax(scores,axis = 1)
-    # h = scores[np.arange(N),indicies]
-    # f = scores - np.max(scores)
-    # p = np.exp(f)/np.sum(np.exp(f), axis = 1,keepdims = True)
-
-
-    # loss = np.sum(-np.log(p[np.arange(N),y]))
-    # loss /= N
-    # loss += 0.5 * reg * (np.sum(W1*W1) + np.sum(W2*W2))
 
     loss,dscores = softmax_loss(scores,y)
     loss += 0.5 * reg * (np.sum(W1*W1) + np.sum(W2*W2))
 
     #compute gradient
-    # ind = np.zeros_like(p)
-    # ind[np.arange(N),y] = 1
-    # dscores = p - ind
-    # dscores /= N
-    # grads['W2'] = a1.T.dot(dscores)
-    # grads['b2'] = np.sum(dscores,axis = 0)
-    # grads['W2'] += reg * W2
-    # grads['b2'] += reg * b2
 
     da1, dW2, db2 = affine_backward(dscores,cache_scores)
     dW2 += reg * W2
@@ -140,16 +122,8 @@ class TwoLayerNet(object):
                   'b1':db1,
                   'W2':dW2,
                   'b2':db2, })
-    # dloss_a1 = dscores.dot(W2.T)
-    # da1_z1 = z1
-    # da1_z1[da1_z1>0] = 1
 
-    # dloss_z1 = np.where(da1_z1>0,dloss_a1,0)
-    # grads['W1'] = X.T.dot(np.where(da1_z1>0,dloss_a1,0))
-    # grads['b1'] = np.sum(dloss_a1,axis=0)
 
-    # grads['W1'] += reg * W1
-    # grads['b1'] += reg * b1
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -291,12 +265,7 @@ class FullyConnectedNet(object):
     # self.bn_params[1] to the forward pass for the second batch normalization #
     # layer, etc.                                                              #
     ############################################################################
-    # W1,b1 = self.params['W1'], self.params['b1']
-    # W2,b2 = self.params['W2'], self.params['b2']
-    # N = X.shape[0]
 
-    # hidden_layers,cache_hidden = affine_relu_forward(X,W1,b1)
-    # scores, cache_scores = affine_forward(X,W2,b2)
     layer_input = X
     fc_out = {}
     cache_fc = {}
@@ -305,10 +274,11 @@ class FullyConnectedNet(object):
     for lay in xrange(hidden_dims):
         if self.use_batchnorm:
                 layer_input,cache_fc[lay] = affine_bn_relu_forward(layer_input,self.params['W%d'%(lay+1)],\
-                                                              self.params['b%d'%(lay+1)], self.params['gamma%d'%(lay+1)],\
-                                                             self.params['beta%d'%(lay+1)],self.bn_params[lay])
+                                                 self.params['b%d'%(lay+1)], self.params['gamma%d'%(lay+1)],\
+                                                 self.params['beta%d'%(lay+1)],self.bn_params[lay])
         else:
-            layer_input,cache_fc[lay] = affine_relu_forward(layer_input, self.params['W%d'%(lay+1)],self.params['b%d'%(lay+1)])
+            layer_input,cache_fc[lay] = affine_relu_forward(layer_input,\
+                                                            self.params['W%d'%(lay+1)],self.params['b%d'%(lay+1)])
         #print "cache_hidden[%d]="%(lay),cache_hidden[lay]
         if self.use_dropout:
             layer_input,cache_dp[lay] = dropout_forward(layer_input,self.dropout_param)
@@ -343,27 +313,19 @@ class FullyConnectedNet(object):
     for lay in xrange(self.num_layers):
           loss += 0.5 * reg * np.sum(self.params['W%d'%(lay+1)]**2)
 
-
     dx, dw, db = affine_backward(dscores,cache_fc[self.num_layers - 1])
     grads['W%d'%(self.num_layers)] = dw + reg * self.params['W%d'%(self.num_layers)]
     grads['b%d'%(self.num_layers)] = db + reg * self.params['b%d'%(self.num_layers)]
     dhout = dx
-    #dhidden_layer[self.num_layers] = dfc_out
-    #cache_hidden[self.num_layers-1] = cache_fc_out
 
     for idx in xrange(hidden_dims):
           lay = hidden_dims - idx - 1
-          #print "lay=",lay
-          #print "dhout shape:",dhout.shape
-          #print "cache_fc[%d]="%lay,cache_fc[lay]
           if self.use_dropout:
               dhout = dropout_backward(dhout, cache_dp[lay])
           if self.use_batchnorm:
               dx, dw, db, dgamma, dbeta = affine_bn_relu_backward(dhout,cache_fc[lay])
           else:
               dx, dw, db = affine_relu_backward(dhout,cache_fc[lay])
-          #print "self.num_layers - 1=",self.num_layers - 1
-          #print "dhidden_layer[%d]="%(self.num_layers-lay),dhidden_layer[self.num_layers-lay]
 
           grads['W%d'%(lay+1)] = dw + reg * self.params['W%d'%(lay+1)]
           grads['b%d'%(lay+1)] = db + reg * self.params['b%d'%(lay+1)]

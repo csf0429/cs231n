@@ -123,7 +123,7 @@ def batchnorm_forward(x, gamma, beta, bn_param):
   computed from minibatch statistics and used to normalize the incoming data.
   During training we also keep an exponentially decaying running mean of the mean
   and variance of each feature, and these averages are used to normalize data
-  at test-time.
+  at test-time.o
 
   At each timestep we update the running averages for mean and variance using
   an exponential decay based on the momentum parameter:
@@ -176,15 +176,9 @@ def batchnorm_forward(x, gamma, beta, bn_param):
     # the momentum variable to update the running mean and running variance,    #
     # storing your result in the running_mean and running_var variables.        #
     #############################################################################
-    # pass
     m,d = x.shape
-    #print m,d
     sample_mean = np.mean(x,axis=0)
     sample_var = np.mean((x - sample_mean)**2,axis = 0)
-    #print "running mean.shape:",running_mean.shape
-    # print "samlple_mean.shape",sample_mean.shape
-    #running_mean = 1/m * np.sum(x,axis = 0)
-    #running_var = 1/m * np.sum((x - running_mean)**2,axis=0)
     xmu = x- sample_mean
     sqrtvar = np.sqrt(sample_var + eps)
     x_hat = (xmu)/sqrtvar
@@ -194,13 +188,6 @@ def batchnorm_forward(x, gamma, beta, bn_param):
 
     running_mean = momentum * running_mean + (1-momentum) * sample_mean
     running_var = momentum * running_var + (1-momentum) * sample_var
-    # sample_mean = np.mean(x, axis=0)
-    # sample_var = np.var(x, axis=0)
-    # x_hat = (x - sample_mean) / (np.sqrt(sample_var + eps))
-    # out = gamma * x_hat + beta
-    # cache = (gamma, x, sample_mean, sample_var, eps, x_hat)
-    # running_mean = momentum * running_mean + (1 - momentum) * sample_mean
-    # running_var = momentum * running_var + (1 - momentum) * sample_var
 
     #############################################################################
     #                             END OF YOUR CODE                              #
@@ -257,7 +244,6 @@ def batchnorm_backward(dout, cache):
 
   dxhat = gamma * dout
   divar = np.sum(dxhat * xmu,axis = 0)
- # print "divar shape,N,D:",divar.shape,N,D
 
   dxmu1  = dxhat * inv_var
 
@@ -270,26 +256,9 @@ def batchnorm_backward(dout, cache):
   dmu = -1*np.sum(dxmu1 + dxmu2,axis=0)
   dx2 = 1./N*np.ones((N,D)) * dmu
   dx = dx1 + dx2
-  #gamma, x, u_b, sigma_squared_b, eps, x_hat = cache
-  #N = x.shape[0]
-
-  #dx_1 = gamma * dout
-  #dx_2_b = np.sum((x - u_b) * dx_1, axis=0)
-  #dx_2_a = ((sigma_squared_b + eps) ** -0.5) * dx_1
-  #dx_3_b = (-0.5) * ((sigma_squared_b + eps) ** -1.5) * dx_2_b
-  #dx_4_b = dx_3_b * 1
-  #dx_5_b = np.ones_like(x) / N * dx_4_b
-  #dx_6_b = 2 * (x - u_b) * dx_5_b
-  #dx_7_a = dx_6_b * 1 + dx_2_a * 1
-  #dx_7_b = dx_6_b * 1 + dx_2_a * 1
-  #dx_8_b = -1 * np.sum(dx_7_b, axis=0)
-
-  #dx_9_b = np.ones_like(x) / N * dx_8_b
-  #dx_10 = dx_9_b + dx_7_a
 
   dgamma = np.sum(xhat * dout, axis=0)
   dbeta = np.sum(dout, axis=0)
-  #dx = dx_10
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################

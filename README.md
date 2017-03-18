@@ -3,6 +3,8 @@
 
 The course website: http://cs231n.stanford.edu/
 
+More details in experiment in my blog: https://csf0429.github.io/
+
 Assignment list:
 
  * Assignment #1
@@ -15,7 +17,7 @@ Assignment list:
  	* Q1: Fully-connected Neural Network (30 points) [***done!***]
  	* Q2: Batch Normalization (30 points)[***done!***]
  	* Q3: Dropout (10 points)[***done!***]
- 	* Q4: ConvNet on CIFAR-10 (30 points)
+ 	* Q4: ConvNet on CIFAR-10 (30 points)[***done!***]
  * Assignment #3
  	* Q1: Image Captioning with Vanilla RNNs (40 points)
  	* Q2: Image Captioning with LSTMs (35 points)
