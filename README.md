@@ -3,7 +3,7 @@
 
 The course website: http://cs231n.stanford.edu/
 
-You can see more details about experiments in my blog: https://csf0429.github.io/
+You can see more details about experiments in my blog: http://danielcai0429.com/blog/wordpress/index.php/tag/cs231n
 
  * Assignment #1
  	* Q1: k-Nearest Neighbor classifier (20 points) [**done!**]
