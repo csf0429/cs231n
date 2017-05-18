@@ -1,0 +1,5 @@
+*.swp
+*.pyc
+.env/*
+assignment3/cs231n/datasets/*
+*.jpeg
