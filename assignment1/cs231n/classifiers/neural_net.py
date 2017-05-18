@@ -78,11 +78,11 @@ class TwoLayerNet(object):
     z1 = X.dot(W1)+b1
     # print "z1.shape",z1.shape
     a1 = np.maximum(0,z1)
-    scores = a1.dot(W2)+b2 
+    scores = a1.dot(W2)+b2
     #############################################################################
     #                              END OF YOUR CODE                             #
     #############################################################################
-    
+
     # If the targets are not given then jump out, we're done
     if y is None:
       return scores
@@ -102,7 +102,7 @@ class TwoLayerNet(object):
     #print "h:",h
     f = scores - np.max(scores)
     p = np.exp(f)/np.sum(np.exp(f),axis=1,keepdims = True)
-    
+
     loss = np.sum(-np.log(p[np.arange(N),y]))
     loss /= N
     loss += 0.5 * reg * (np.sum(W1*W1) + np.sum(W2*W2))
@@ -120,19 +120,19 @@ class TwoLayerNet(object):
     ind = np.zeros_like(p)
     ind[np.arange(N),y] = 1
     dscores = p -ind
-    dscores /= N 
+    dscores /= N
     grads['W2'] = a1.T.dot(dscores)
-    grads['b2'] = np.sum(dscores,axis = 0)    
+    grads['b2'] = np.sum(dscores,axis = 0)
     grads['W2'] += reg * W2
     grads['b2'] += reg * b2
 
     dloss_a1 = dscores.dot(W2.T)
     da1_z1 = z1
-    da1_z1[da1_z1>0] = 1 
+    da1_z1[da1_z1>0] = 1
     # print "dloss_a1 shape:",dloss_a1.shape
     # print "da1_z1 shape",da1_z1.shape
     dloss_z1 = np.where(da1_z1>0,dloss_a1,0)
-    grads['W1'] = X.T.dot(np.where(da1_z1>0,dloss_a1,0))   
+    grads['W1'] = X.T.dot(np.where(da1_z1>0,dloss_a1,0))
     grads['W1'] += reg * W1
     #print 'dloss_z1 shape',dloss_z1.shape
     grads['b1'] = np.sum(dloss_z1,axis=0)
