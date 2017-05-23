@@ -144,6 +144,8 @@ class CaptioningRNN(object):
     #step 3
     if self.cell_type == 'rnn':
         h, cache_rnn = rnn_forward(x, h0, Wx, Wh, b)
+    elif self.cell_type == 'lstm':
+        h, cache_lstm = lstm_forward(x, h0, Wx, Wh, b)
     else:
         raise ValueError('%s not implented' % (self.cell_type))
 
@@ -159,6 +161,8 @@ class CaptioningRNN(object):
     #backward into step 3
     if self.cell_type == 'rnn':
         dx, dh0, dWx, dWh, db = rnn_backward(dh, cache_rnn)
+    elif self.cell_type == 'lstm':
+        dx, dh0, dWx, dWh, db = lstm_backward(dh, cache_lstm)
     else:
         raise ValueError('%s not implemented' %(self.cell_type))
 
@@ -258,6 +262,8 @@ class CaptioningRNN(object):
         if self.cell_type == 'rnn':
             #print word_embed.shape
             h, _ = rnn_step_forward(np.squeeze(word_embed), prev_h, Wx, Wh, b)
+        elif self.cell_type == 'lstm':
+            h, c, _ = lstm_step_forward(np.squeeze(word_embed),prev_h, prev_c , Wx, Wh, b)
         else:
             raise ValueError ('%s not implented' %(self.cell_type))
 
