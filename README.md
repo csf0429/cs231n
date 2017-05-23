@@ -17,7 +17,7 @@ You can see more details about experiments in my blog: https://csf0429.github.io
  	* Q3: Dropout (10 points)[**done!**]
  	* Q4: ConvNet on CIFAR-10 (30 points)[**done!**]
  * Assignment #3
- 	* Q1: Image Captioning with Vanilla RNNs (40 points)
+ 	* Q1: Image Captioning with Vanilla RNNs (40 points)[done!]
  	* Q2: Image Captioning with LSTMs (35 points)
  	* Q3: Image Gradients: Saliency maps and Fooling Images (10 points)
  	* Q4: Image Generation: Classes, Inversion, DeepDream (15 points)
